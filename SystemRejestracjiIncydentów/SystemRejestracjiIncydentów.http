@@ -1,0 +1,6 @@
+@SystemRejestracjiIncydentów_HostAddress = http://localhost:5221
+
+GET {{SystemRejestracjiIncydentów_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

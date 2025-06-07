@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  sqlserverdb:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserverdb
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong!Passw0rd
+    ports:
+      - "1433:1433"
+    networks:
+      - mynetwork
+
+  webapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: webapi
+    ports:
+      - "5000:80"
+    depends_on:
+      - sqlserverdb
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
