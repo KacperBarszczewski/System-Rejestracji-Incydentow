@@ -46,6 +46,9 @@ namespace SystemRejestracjiIncydentów.Services
                 Status = dto.Status
             };
 
+            if (incident.ResolvedAt < incident.OccurredAt)
+                return null;
+
             return await _repository.AddAsync(incident);
         }
 
