@@ -4,11 +4,11 @@ namespace SystemRejestracjiIncydentów.Repositories
 {
     public interface IIncidentRepository
     {
-        Task<Incident?> GetByIdAsync(int id);
         Task<IEnumerable<Incident>> GetAllAsync();
-        Task AddAsync(Incident incident);
-        Task UpdateAsync(Incident incident);
-        Task SaveChangesAsync();
+        Task<Incident?> GetByIdAsync(int id);
+        Task<Incident> AddAsync(Incident incident);
+        Task<Incident?> UpdateAsync(Incident incident);
+        Task<bool> DeleteAsync(int id);
     }
 
 }

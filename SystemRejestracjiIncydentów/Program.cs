@@ -20,9 +20,10 @@ builder.Services.AddControllers()
     });
 
 // Add services to the container.
-builder.Services.AddScoped<IIncidentRepository, EfIncidentRepository>();
+builder.Services.AddScoped<IIncidentRepository, IncidentRepository>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ILocationService, LocationService>();
+builder.Services.AddScoped<IIncidentService, IncidentService>();
 
 
 builder.Services.AddControllers();
