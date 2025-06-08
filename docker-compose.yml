@@ -15,7 +15,12 @@ services:
       MSSQL_SA_PASSWORD: "Admin123!"
     ports:
         - "1433:1433"
-    # volumes:
+    volumes:
+        - sqlserverdata:/var/opt/mssql
     #   - ./DB/data:/var/opt/mssql/data
     #   - ./DB/log:/var/opt/mssql/log
     #   - ./DB/secrets:/var/opt/mssql/secrets
+
+volumes:
+    sqlserverdata:
+      driver: local
