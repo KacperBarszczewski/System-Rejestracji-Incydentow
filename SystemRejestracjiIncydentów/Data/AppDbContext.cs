@@ -17,13 +17,6 @@ namespace SystemRejestracjiIncydentów.Data
                 .HasOne(i => i.Location)
                 .WithMany()
                 .HasForeignKey(i => i.LocationId);
-            modelBuilder.Entity<Location>()
-                .Property(l => l.Name)
-                .IsRequired()
-                .HasMaxLength(100);
-            modelBuilder.Entity<Location>()
-                .Property(l => l.Description)
-                .HasMaxLength(500);
 
             modelBuilder.Entity<Incident>()
                 .Property(x => x.Status)

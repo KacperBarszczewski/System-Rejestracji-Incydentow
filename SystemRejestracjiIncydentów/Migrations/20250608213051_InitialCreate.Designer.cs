@@ -12,7 +12,7 @@ using SystemRejestracjiIncydentów.Data;
 namespace SystemRejestracjiIncydentów.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250608133141_InitialCreate")]
+    [Migration("20250608213051_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -71,13 +71,11 @@ namespace SystemRejestracjiIncydentów.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
