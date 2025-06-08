@@ -32,6 +32,9 @@ namespace SystemRejestracjiIncydentów.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] IncidentCreateDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var created = await _service.AddAsync(dto);
             return created == null ? BadRequest() : CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }

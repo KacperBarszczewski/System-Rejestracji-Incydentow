@@ -27,14 +27,17 @@ namespace SystemRejestracjiIncydentów.Services
 
         public async Task<Incident?> AddAsync(IncidentCreateDto dto)
         {
-            var location = await _locationRepository.GetByIdAsync(dto.LocationId);
+            if (dto.LocationId == null) return null;
+
+
+            var location = await _locationRepository.GetByIdAsync(dto.LocationId.Value);
             if (location == null)
                 return null;
 
 
             var incident = new Incident
             {
-                LocationId = dto.LocationId,
+                LocationId = dto.LocationId.Value,
                 Description = dto.Description,
                 OccurredAt = dto.OccurredAt ?? DateTime.Now,
                 ResolvedAt = dto.ResolvedAt,
@@ -47,8 +50,10 @@ namespace SystemRejestracjiIncydentów.Services
 
         public async Task<Incident?> UpdateAsync(int id, IncidentCreateDto updated)
         {
+            if (updated.LocationId == null) return null;
+
             var existing = await _repository.GetByIdAsync(id);
-            var location = await _locationRepository.GetByIdAsync(updated.LocationId);
+            var location = await _locationRepository.GetByIdAsync(updated.LocationId.Value);
 
             if (existing == null || location == null) return null;
 
@@ -57,7 +62,7 @@ namespace SystemRejestracjiIncydentów.Services
             existing.ResolvedAt = updated.ResolvedAt;
             existing.Priority = updated.Priority;
             existing.Status = updated.Status;
-            existing.LocationId = updated.LocationId;
+            existing.LocationId = updated.LocationId.Value;
 
             return await _repository.UpdateAsync(existing);
         }
