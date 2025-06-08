@@ -18,6 +18,9 @@ namespace SystemRejestracjiIncydentów.Controllers
         [HttpPost]
         public async Task<ActionResult<ReportResultDto>> GenerateReport([FromBody] ReportRequestDto request)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var report = await _service.GenerateReportAsync(request);
             return Ok(report);
         }
