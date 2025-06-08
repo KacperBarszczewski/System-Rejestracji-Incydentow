@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SystemRejestracjiIncydentów.Data;
+using SystemRejestracjiIncydentów.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 // Add services to the container.
+builder.Services.AddScoped<IIncidentRepository, EfIncidentRepository>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
