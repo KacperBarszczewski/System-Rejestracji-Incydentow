@@ -9,7 +9,7 @@ namespace SystemRejestracjiIncydentów.Dtos
         public int? LocationId { get; set; }
         [Required]
         [StringLength(500)]
-        public string Description { get; set; } = string.Empty;
+        public string? Description { get; set; }
         public DateTime? OccurredAt { get; set; }
         public DateTime? ResolvedAt { get; set; }
         public PriorityLevel Priority { get; set; }

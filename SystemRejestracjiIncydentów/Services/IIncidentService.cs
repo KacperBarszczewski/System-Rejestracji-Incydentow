@@ -10,5 +10,6 @@ namespace SystemRejestracjiIncydentów.Services
         Task<Incident?> AddAsync(IncidentCreateDto dto);
         Task<Incident?> UpdateAsync(int id, IncidentCreateDto incident);
         Task<bool> DeleteAsync(int id);
+        Task<Incident?> MarkAsResolvedAsync(int id);
     }
 }

@@ -52,5 +52,19 @@ namespace SystemRejestracjiIncydentów.Controllers
             var success = await _service.DeleteAsync(id);
             return success ? NoContent() : NotFound();
         }
+
+        [HttpPatch("complete/{id}")]
+        public async Task<IActionResult> MarkAsCompleted(int id)
+        {
+            var incident = await _service.GetByIdAsync(id);
+            if (incident == null)
+                return NotFound();
+
+            var result = await _service.MarkAsResolvedAsync(id);
+            if (result == null)
+                return BadRequest();
+
+            return Ok(result);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using SystemRejestracjiIncydentów.Dtos;
 using SystemRejestracjiIncydentów.Entities;
+using SystemRejestracjiIncydentów.Enums;
 using SystemRejestracjiIncydentów.Repositories;
 
 namespace SystemRejestracjiIncydentów.Services
@@ -38,7 +39,7 @@ namespace SystemRejestracjiIncydentów.Services
             var incident = new Incident
             {
                 LocationId = dto.LocationId.Value,
-                Description = dto.Description,
+                Description = dto.Description ?? string.Empty,
                 OccurredAt = dto.OccurredAt ?? DateTime.Now,
                 ResolvedAt = dto.ResolvedAt,
                 Priority = dto.Priority,
@@ -57,7 +58,7 @@ namespace SystemRejestracjiIncydentów.Services
 
             if (existing == null || location == null) return null;
 
-            existing.Description = updated.Description;
+            existing.Description = updated.Description ?? string.Empty;
             existing.OccurredAt = updated.OccurredAt ?? DateTime.Now;
             existing.ResolvedAt = updated.ResolvedAt;
             existing.Priority = updated.Priority;
@@ -70,6 +71,17 @@ namespace SystemRejestracjiIncydentów.Services
         public async Task<bool> DeleteAsync(int id)
         {
             return await _repository.DeleteAsync(id);
+        }
+
+        public async Task<Incident?> MarkAsResolvedAsync(int id)
+        {
+            var incident = await _repository.GetByIdAsync(id);
+            if (incident == null) return null;
+
+            incident.Status = IncidentStatus.Closed;
+            incident.ResolvedAt = DateTime.Now;
+
+            return await _repository.UpdateAsync(incident);
         }
     }
 }
