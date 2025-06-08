@@ -24,6 +24,7 @@ builder.Services.AddScoped<IIncidentRepository, IncidentRepository>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<IIncidentService, IncidentService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 
 builder.Services.AddControllers();
