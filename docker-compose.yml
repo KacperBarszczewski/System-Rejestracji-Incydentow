@@ -1,28 +1,26 @@
-version: '3.8'
 services:
-  sqlserverdb:
-    image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: sqlserverdb
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong!Passw0rd
-    ports:
-      - "1433:1433"
-    networks:
-      - mynetwork
-
-  webapi:
+  systemrejestracjiincydentw:
+    image: ${DOCKER_REGISTRY-}systemrejestracjiincydentw
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: webapi
-    ports:
-      - "5000:80"
+      dockerfile: SystemRejestracjiIncydentów/Dockerfile
     depends_on:
-      - sqlserverdb
-    networks:
-      - mynetwork
+      - db
 
-networks:
-  mynetwork:
-    driver: bridge
+  db:
+    container_name: MSSQL
+    image: mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "Admin123!"
+    ports:
+        - "1433:1433"
+    volumes:
+        - sqlserverdata:/var/opt/mssql
+    #   - ./DB/data:/var/opt/mssql/data
+    #   - ./DB/log:/var/opt/mssql/log
+    #   - ./DB/secrets:/var/opt/mssql/secrets
+
+volumes:
+    sqlserverdata:
+      driver: local
