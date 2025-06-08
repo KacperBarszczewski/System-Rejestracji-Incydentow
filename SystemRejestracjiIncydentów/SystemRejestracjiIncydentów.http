@@ -1,4 +1,4 @@
-@SystemRejestracjiIncydentów_HostAddress = http://localhost:5221
+@SystemRejestracjiIncydentów_HostAddress = https://localhost:64433
 
 GET {{SystemRejestracjiIncydentów_HostAddress}}/weatherforecast/
 Accept: application/json
