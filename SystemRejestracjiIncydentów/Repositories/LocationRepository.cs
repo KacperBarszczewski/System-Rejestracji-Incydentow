@@ -31,15 +31,10 @@ public class LocationRepository : ILocationRepository
 
     public async Task<Location?> UpdateAsync(Location location)
     {
-        var existing = await _context.Locations.FindAsync(location.Id);
-        if (existing == null) return null;
-
-        existing.Name = location.Name;
-        existing.Description = location.Description;
-        existing.Status = location.Status;
-
+        _context.Locations.Update(location);
         await _context.SaveChangesAsync();
-        return existing;
+        return location;
+
     }
 
     public async Task<bool> DeleteAsync(int id)

@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using SystemRejestracjiIncydentów.Data;
 using SystemRejestracjiIncydentów.Repositories;
+using SystemRejestracjiIncydentów.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +13,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 // Add services to the container.
 builder.Services.AddScoped<IIncidentRepository, EfIncidentRepository>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<ILocationService, LocationService>();
 
 
 builder.Services.AddControllers();
