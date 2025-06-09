@@ -35,36 +35,35 @@ namespace SystemRejestracjiIncydentów.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var created = await _service.AddAsync(dto);
-            return created == null ? BadRequest() : CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+            var result = await _service.AddAsync(dto);
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
+
+            return CreatedAtAction(nameof(GetById), new { id = result.Data!.Id }, result.Data);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] IncidentCreateDto dto)
         {
-            var updated = await _service.UpdateAsync(id, dto);
-            return updated == null ? NotFound() : Ok(updated);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _service.UpdateAsync(id, dto);
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Error);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var success = await _service.DeleteAsync(id);
-            return success ? NoContent() : NotFound();
+            var result = await _service.DeleteAsync(id);
+            return result.IsSuccess ? NoContent() : NotFound(result.Error);
         }
 
         [HttpPatch("complete/{id}")]
         public async Task<IActionResult> MarkAsCompleted(int id)
         {
-            var incident = await _service.GetByIdAsync(id);
-            if (incident == null)
-                return NotFound();
-
             var result = await _service.MarkAsResolvedAsync(id);
-            if (result == null)
-                return BadRequest();
-
-            return Ok(result);
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Error);
         }
     }
 }
