@@ -32,22 +32,25 @@ namespace SystemRejestracjiIncydentów.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] Location location)
         {
-            var created = await _service.CreateAsync(location);
-            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+            var result = await _service.CreateAsync(location);
+            if (!result.IsSuccess)
+                return BadRequest(result.Error);
+
+            return CreatedAtAction(nameof(GetById), new { id = result.Data!.Id }, result.Data);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Location location)
         {
-            var updated = await _service.UpdateAsync(id, location);
-            return updated == null ? NotFound() : Ok(updated);
+            var result = await _service.UpdateAsync(id, location);
+            return result.IsSuccess ? Ok(result.Data) : NotFound(result.Error);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var deleted = await _service.DeleteAsync(id);
-            return deleted ? NoContent() : NotFound();
+            var result = await _service.DeleteAsync(id);
+            return result.IsSuccess ? NoContent() : NotFound(result.Error);
         }
     }
 

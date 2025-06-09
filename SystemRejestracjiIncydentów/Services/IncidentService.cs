@@ -1,4 +1,5 @@
-﻿using SystemRejestracjiIncydentów.Dtos;
+﻿using SystemRejestracjiIncydentów.Common;
+using SystemRejestracjiIncydentów.Dtos;
 using SystemRejestracjiIncydentów.Entities;
 using SystemRejestracjiIncydentów.Enums;
 using SystemRejestracjiIncydentów.Repositories;
@@ -26,14 +27,14 @@ namespace SystemRejestracjiIncydentów.Services
             return await _repository.GetByIdAsync(id);
         }
 
-        public async Task<Incident?> AddAsync(IncidentCreateDto dto)
+        public async Task<Result<Incident>> AddAsync(IncidentCreateDto dto)
         {
-            if (dto.LocationId == null) return null;
-
+            if (dto.LocationId == null)
+                return Result<Incident>.Failure("LocationId is required.");
 
             var location = await _locationRepository.GetByIdAsync(dto.LocationId.Value);
             if (location == null)
-                return null;
+                return Result<Incident>.Failure($"Location with ID {dto.LocationId.Value} not found.");
 
 
             var incident = new Incident
@@ -46,20 +47,27 @@ namespace SystemRejestracjiIncydentów.Services
                 Status = dto.Status
             };
 
-            if (incident.ResolvedAt < incident.OccurredAt)
-                return null;
 
-            return await _repository.AddAsync(incident);
+            if (incident.ResolvedAt < incident.OccurredAt)
+                return Result<Incident>.Failure("ResolvedAt cannot be earlier than OccurredAt.");
+
+            var created = await _repository.AddAsync(incident);
+            return Result<Incident>.Success(created);
         }
 
-        public async Task<Incident?> UpdateAsync(int id, IncidentCreateDto updated)
+        public async Task<Result<Incident>> UpdateAsync(int id, IncidentCreateDto updated)
         {
-            if (updated.LocationId == null) return null;
+
+            if (updated.LocationId == null)
+                return Result<Incident>.Failure("LocationId is required.");
 
             var existing = await _repository.GetByIdAsync(id);
-            var location = await _locationRepository.GetByIdAsync(updated.LocationId.Value);
+            if (existing == null)
+                return Result<Incident>.Failure("Incident not found.");
 
-            if (existing == null || location == null) return null;
+            var location = await _locationRepository.GetByIdAsync(updated.LocationId.Value);
+            if (location == null)
+                return Result<Incident>.Failure($"Location with ID {updated.LocationId.Value} not found.");
 
             existing.Description = updated.Description ?? string.Empty;
             existing.OccurredAt = updated.OccurredAt ?? DateTime.Now;
@@ -68,23 +76,32 @@ namespace SystemRejestracjiIncydentów.Services
             existing.Status = updated.Status;
             existing.LocationId = updated.LocationId.Value;
 
-            return await _repository.UpdateAsync(existing);
+            if (existing.ResolvedAt < existing.OccurredAt)
+                return Result<Incident>.Failure("ResolvedAt cannot be earlier than OccurredAt.");
+
+            var updatedIncident = await _repository.UpdateAsync(existing);
+            return Result<Incident>.Success(updatedIncident!);
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<Result<bool>> DeleteAsync(int id)
         {
-            return await _repository.DeleteAsync(id);
+            var deleted = await _repository.DeleteAsync(id);
+            return deleted
+                ? Result<bool>.Success(true)
+                : Result<bool>.Failure("Incident not found.");
         }
 
-        public async Task<Incident?> MarkAsResolvedAsync(int id)
+        public async Task<Result<Incident>> MarkAsResolvedAsync(int id)
         {
             var incident = await _repository.GetByIdAsync(id);
-            if (incident == null) return null;
+            if (incident == null)
+                return Result<Incident>.Failure("Incident not found.");
 
             incident.Status = IncidentStatus.Closed;
             incident.ResolvedAt = DateTime.Now;
 
-            return await _repository.UpdateAsync(incident);
+            var updated = await _repository.UpdateAsync(incident);
+            return Result<Incident>.Success(updated!);
         }
     }
 }

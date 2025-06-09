@@ -1,4 +1,5 @@
-﻿using SystemRejestracjiIncydentów.Entities;
+﻿using SystemRejestracjiIncydentów.Common;
+using SystemRejestracjiIncydentów.Entities;
 using SystemRejestracjiIncydentów.Repositories;
 
 namespace SystemRejestracjiIncydentów.Services
@@ -22,27 +23,35 @@ namespace SystemRejestracjiIncydentów.Services
             return await _repository.GetByIdAsync(id);
         }
 
-        public async Task<Location> CreateAsync(Location location)
+        public async Task<Result<Location>> CreateAsync(Location location)
         {
+            if (string.IsNullOrWhiteSpace(location.Name))
+                return Result<Location>.Failure("Name is required.");
 
-            return await _repository.AddAsync(location);
+            var created = await _repository.AddAsync(location);
+            return Result<Location>.Success(created);
         }
 
-        public async Task<Location?> UpdateAsync(int id, Location location)
+        public async Task<Result<Location>> UpdateAsync(int id, Location location)
         {
-            var location2 = await _repository.GetByIdAsync(id);
-            if (location2 == null) return null;
+            var existing = await _repository.GetByIdAsync(id);
+            if (existing == null)
+                return Result<Location>.Failure("Location not found.");
 
-            location2.Name = location.Name;
-            location2.Description = location.Description;
-            location2.Status = location.Status;
+            existing.Name = location.Name;
+            existing.Description = location.Description;
+            existing.Status = location.Status;
 
-            return await _repository.UpdateAsync(location2);
+            var updated = await _repository.UpdateAsync(existing);
+            return Result<Location>.Success(updated!);
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<Result<bool>> DeleteAsync(int id)
         {
-            return await _repository.DeleteAsync(id);
+            var deleted = await _repository.DeleteAsync(id);
+            return deleted
+                ? Result<bool>.Success(true)
+                : Result<bool>.Failure("Location not found.");
         }
     }
 
