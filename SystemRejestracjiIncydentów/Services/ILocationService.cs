@@ -1,4 +1,5 @@
-﻿using SystemRejestracjiIncydentów.Entities;
+﻿using SystemRejestracjiIncydentów.Common;
+using SystemRejestracjiIncydentów.Entities;
 
 namespace SystemRejestracjiIncydentów.Services
 {
@@ -6,9 +7,9 @@ namespace SystemRejestracjiIncydentów.Services
     {
         Task<IEnumerable<Location>> GetAllAsync();
         Task<Location?> GetByIdAsync(int id);
-        Task<Location> CreateAsync(Location location);
-        Task<Location?> UpdateAsync(int id, Location location);
-        Task<bool> DeleteAsync(int id);
+        Task<Result<Location>> CreateAsync(Location location);
+        Task<Result<Location>> UpdateAsync(int id, Location location);
+        Task<Result<bool>> DeleteAsync(int id);
     }
 
 }
